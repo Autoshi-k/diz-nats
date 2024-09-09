@@ -25,14 +25,16 @@ networks:
 }
 
 func (d Docker) PullAndRun(version, path string) error {
-	cmd := exec.Command("docker pull nats" + version) // version after validation and modification if needed
-	if err := cmd.Run(); err != nil {
+	cmdStr := fmt.Sprintf("docker pull nats %s", version)
+	_, err := exec.Command("/bin/sh", "-c", cmdStr).Output()
+	if err != nil {
 		return err
 	}
 
 	// run docker-compose -f docker-compose.yaml up
-	cmd = exec.Command(fmt.Sprintf("run docker-compose -f %s/docker-compose.yaml up", path))
-	if err := cmd.Run(); err != nil {
+	cmdStr = fmt.Sprintf("run docker-compose -f %s/docker-compose.yaml up", path)
+	_, err = exec.Command("/bin/sh", "-c", cmdStr).Output()
+	if err != nil {
 		return err
 	}
 

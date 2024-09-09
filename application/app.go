@@ -5,6 +5,7 @@ import (
 	"diz-nats/internal/memory"
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 )
 
@@ -45,12 +46,19 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(args)
-			app.NewServer("shani", "latest", "")
+			err := app.NewServer("shani", "latest", "./templates/simple.conf")
+			if err != nil {
+				log.Fatalln(err) // todo need to handle with errors
+			}
 		},
 	}
 
+	var serviceName string
+
 	// took that from init function for both root and test commands
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	testCmd.Flags().StringVarP(&serviceName, "name", "n", "", "Service name must be unique - required")
+	testCmd.MarkFlagRequired("name")
 	rootCmd.AddCommand(testCmd)
 
 	err := rootCmd.Execute()
